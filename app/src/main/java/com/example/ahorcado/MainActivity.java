@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intencion);
     }
 
-    /*public void onActivityResult(inr resquestCode){
-
-    }*/
 
     public void comprobarDatos(){
         Bundle datosOptions = this.getIntent().getExtras();
