@@ -9,38 +9,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+        android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:paddingTop="20dp">
-
-                <ImageView
-                    android:id="@+id/idImagen"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.57"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/dibujo_ahorcado_0" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight="2"
+                android:layout_weight="10"
                 android:layout_marginTop="0dp">
 
 
@@ -55,22 +30,11 @@
                     android:text="A Q U I _ V A _ L A _ P A L A B R A" />
             </LinearLayout>
 
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight="3"
-                android:paddingTop="20dp">
+                android:layout_weight="10">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -113,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight="3">
+                android:layout_weight="10">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -171,7 +135,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:paddingBottom="20dp"
+                android:paddingTop="10dp"
                 android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btnOpciones"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
+                    android:text="OPCIONES"
+                    android:onClick="onClickOptions"/>
 
                 <Button
                     android:id="@+id/btnIniciar"
@@ -184,24 +158,8 @@
                     android:id="@+id/btnFinalizar"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="FINALIZAR" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:layout_marginBottom="30dp">
-
-                <Button
-                    android:id="@+id/btnOpciones"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
                     android:layout_marginRight="50dp"
-                    android:text="OPCIONES"
-                    android:onClick="onClickOptions"/>
+                    android:text="FINALIZAR" />
 
                 <Button
                     android:id="@+id/btnRegistrar"
@@ -211,8 +169,6 @@
                     android:onClick="onClickRegister"/>
 
             </LinearLayout>
-
-        </LinearLayout>
 
     </LinearLayout>
 

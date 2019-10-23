@@ -2,7 +2,9 @@ package com.example.ahorcado;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,36 +33,57 @@ public class Options extends AppCompatActivity {
         botonDificil = findViewById(R.id.btnRadioDificil);
         numeroVidas = findViewById(R.id.numVidas);
         comodin = findViewById(R.id.comodin);
+
+        cargarPreferencias();
+    }
+
+    // Actualizar el nivel de vidas desde el archivo de Preferencias.
+    public void cargarPreferencias(){
+        SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
+        vidas = preferences.getInt("nivelVidas", 0); // Se marca 0, si no existe el archivo de preferencias
+
+        if (vidas == 15)
+            botonFacil.setChecked(true);
+        else if (vidas == 10)
+            botonMedio.setChecked(true);
+        else if (vidas == 5)
+            botonDificil.setChecked(true);
+        else
+            numeroVidas.setText(String.valueOf(vidas));
     }
 
     public void onClickVolver(View view){
-        actualizarNivel(); // Actualizar valor del numero de vidas
-        // Si no hay establecido un numero de vidas, te marca un Toast
-        if (vidas == 0){
-            Toast.makeText(getApplicationContext(), "Establece un nivel o numero de vidas", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intencion = new Intent(Options.this, MainActivity.class);
-            Bundle datos = new Bundle();
-            datos.putInt("numeroVidas", vidas);
-            datos.putBoolean("comodin", comodin());
-            intencion.putExtras(datos);
-            setResult(RESULT_OK, intencion);
-            finish();
-        }
+        // Actualizar valor del numero de vidas
+        actualizarNivel();
+        // Guardar el nivel de vidas en el archivo de preferencias
+        guardarPreferencias();
+        // Guardar en un Bundle el valor del comodin
+        Intent intencion = new Intent(Options.this, MainActivity.class);
+        Bundle datos = new Bundle();
+        datos.putBoolean("comodin", comodin());
+        intencion.putExtras(datos);
+        setResult(RESULT_OK, intencion);
+        finish();
     }
 
     public void actualizarNivel(){
         if (numeroVidas.getText().toString().isEmpty()){
             if(botonFacil.isChecked())
-                vidas = 5;
+                vidas = 15;
             else if(botonMedio.isChecked())
                 vidas = 10;
             else if (botonDificil.isChecked())
-                vidas = 15;
+                vidas = 5;
         } else {
             vidas = Integer.valueOf(numeroVidas.getText().toString());
-            Log.i(null, "entra: ");
         }
+    }
+
+    public void guardarPreferencias(){
+        SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("nivelVidas", vidas);
+        editor.commit();
     }
 
     public boolean comodin(){
