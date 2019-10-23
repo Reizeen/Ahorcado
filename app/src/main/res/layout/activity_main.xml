@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="97dp"
+            android:layout_weight="10"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/idImagen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.57"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/dibujo_ahorcado_0" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="4"
+        android:layout_marginTop="30dp">
+
+
+        <TextView
+            android:id="@+id/idMuestraPalabra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@android:color/background_dark"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="A Q U I _ V A _ L A _ P A L A B R A" />
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POSICIÓN:"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginRight="10dp"/>
+
+            <Spinner
+                android:id="@+id/spinnerPosicion"
+                android:layout_width="100dp"
+                android:layout_height="25dp"
+                tools:layout_editor_absoluteX="154dp"
+                tools:layout_editor_absoluteY="283dp"
+                android:layout_marginRight="40dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PUNTOS:"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:id="@+id/textPuntos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LETRAS:"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="27dp"
+                android:layout_marginRight="10dp" />
+
+            <Spinner
+                android:id="@+id/spinnerLetras"
+                android:layout_width="100dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="58dp"
+                tools:layout_editor_absoluteX="154dp"
+                tools:layout_editor_absoluteY="283dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VIDAS:"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:id="@+id/textVidas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btnJugar"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="JUGAR" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btnIniciar"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:text="INICIAR" />
+
+            <Button
+                android:id="@+id/btnFinalizar"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="FINALIZAR" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_marginBottom="30dp">
+
+            <Button
+                android:id="@+id/btnOpciones"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:text="OPCIONES"
+                android:onClick="onClickOptions"/>
+
+            <Button
+                android:id="@+id/btnRegistrar"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="REGISTRAR"
+                android:onClick="onClickRegister"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
