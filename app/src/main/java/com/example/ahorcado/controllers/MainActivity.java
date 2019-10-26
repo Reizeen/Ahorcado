@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,26 +14,36 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.ahorcado.R;
+import com.example.ahorcado.objects.Palabra;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView muestraPalabra;
-    TextView textPuntos;
-    TextView textVidas;
-    Spinner posicion;
-    Spinner letras;
-    Button botonJugar;
-    Button botonIniciar;
-    Button botonFinalizar;
-    Button botonOpciones;
-    Button botonRegistrar;
+    private TextView textPalabra;
+    private TextView textPuntos;
+    private TextView textVidas;
+    private Spinner posiciones;
+    private Spinner letras;
+    private Button botonJugar;
+    private Button botonIniciar;
+    private Button botonFinalizar;
+    private Button botonOpciones;
+    private Button botonRegistrar;
 
-    ArrayList<Character> listaLetras;
-    String userName;
-    int vidas;
-    boolean comodin;
+    private ArrayList<Character> listaLetras;
+    private ArrayList<String> listaPosiciones;
+    private String userName;
+    private int vidas;
+    private int puntos;
+    private boolean comodin;
+    private ArrayList<String> listaPalabras;
+    private Palabra palabra;
+    private String muestraPalabra;
+    private char[] letrasPalabra;
+    private char[] letrasAdivinadas;
+
 
 
 
@@ -41,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        muestraPalabra = findViewById(R.id.idMuestraPalabra);
+        textPalabra = findViewById(R.id.idMuestraPalabra);
         textPuntos = findViewById(R.id.textPuntos);
         textVidas = findViewById(R.id.textVidas);
         botonJugar = findViewById(R.id.btnJugar);
@@ -55,11 +66,15 @@ public class MainActivity extends AppCompatActivity {
         cargarSpinnerLetras();
 
         // Spinner de posicion NO TERMINADO
-        posicion = findViewById(R.id.spinnerPosicion);
-        /*ArrayAdapter adapterPosuicion
-        posicion.setAdapter();*/
+        posiciones = findViewById(R.id.spinnerPosicion);
 
         userName = "Desconocido";
+        listaPalabras = new ArrayList<>();
+        listaPalabras.add("FUTBOL");
+        listaPalabras.add("BICICLETA");
+        listaPalabras.add("ORDENADOR");
+        listaPalabras.add("COCHE");
+
         // Cargar el archivo de preferencias
         cargarPreferencias();
 
@@ -108,4 +123,85 @@ public class MainActivity extends AppCompatActivity {
             cargarPreferencias(); // Actualizamos de nuevo las Preferencias
         }
     }
+
+    // Inicia el juego
+    public void onClickIniciar(View view){
+        botonJugar.setEnabled(true);
+        botonFinalizar.setEnabled(true);
+        botonIniciar.setEnabled(false);
+        botonOpciones.setEnabled(false);
+        botonRegistrar.setEnabled(false);
+
+        palabra = new Palabra(listaPalabras);
+        palabra.seleccionPalabra();
+        muestraPalabra = "";
+        letrasPalabra = palabra.palabraDividia();
+        letrasAdivinadas = new char[letrasPalabra.length];
+        for (int x = 0; x < letrasAdivinadas.length; x++){
+            muestraPalabra += " _ ";
+            letrasAdivinadas[x] = '_';
+        }
+        textPalabra.setText(muestraPalabra);
+
+        // Cargar Spinner Posiciones
+        listaPosiciones = new ArrayList<>();
+        if(comodin)
+            listaPosiciones.add("*");
+        for(int x = 1; x <= letrasPalabra.length; x++){
+            listaPosiciones.add(String.valueOf(x));
+        }
+        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaPosiciones);
+        posiciones.setAdapter(adapterPosiciones);
+    }
+
+    // Controlador del funcionamiento del juego
+    public void onClickJugar(View view){
+        if (posiciones.getSelectedItem().equals("*")){
+            boolean adivinado = false;
+            for(int x = 0; x < letrasPalabra.length; x++){
+                if(letras.getSelectedItem().equals(letrasPalabra[x])){
+                    letrasAdivinadas[x] = letrasPalabra[x];
+                    adivinado = true;
+                }
+            }
+            if(adivinado) {
+                puntos++;
+                textPuntos.setText(String.valueOf(puntos));
+            } else {
+                vidas--;
+                textVidas.setText(String.valueOf(vidas));
+            }
+
+        } else {
+            // adaptar posicion del usuario a las posiciones del Array de Char
+            int pos = Integer.parseInt(posiciones.getSelectedItem().toString()) - 1;
+            if(letras.getSelectedItem().equals(letrasPalabra[pos])){
+                puntos+=5;
+                textPuntos.setText(String.valueOf(puntos));
+                letrasAdivinadas[pos] = letrasPalabra[pos];
+            } else {
+                vidas--;
+                textVidas.setText(String.valueOf(vidas));
+            }
+        }
+
+        // Imprimir resultado en pantalla
+        muestraPalabra = "";
+        for(int x = 0; x < letrasAdivinadas.length; x++){
+            muestraPalabra += " " + letrasAdivinadas[x] + " ";
+        }
+        textPalabra.setText(muestraPalabra);
+    }
+
+    public  void onClickFinalizar(View view){
+        botonJugar.setEnabled(false);
+        botonFinalizar.setEnabled(false);
+        botonIniciar.setEnabled(true);
+        botonOpciones.setEnabled(true);
+        botonRegistrar.setEnabled(true);
+        cargarPreferencias();
+        puntos = 0;
+        textPuntos.setText(String.valueOf(puntos));
+    }
+
 }
