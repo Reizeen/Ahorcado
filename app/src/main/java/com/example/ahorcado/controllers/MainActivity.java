@@ -1,4 +1,4 @@
-package com.example.ahorcado;
+package com.example.ahorcado.controllers;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,14 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterViewAnimator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.example.ahorcado.R;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,10 +28,12 @@ public class MainActivity extends AppCompatActivity {
     Button botonFinalizar;
     Button botonOpciones;
     Button botonRegistrar;
-    String[] listaPalabras;
+
+    ArrayList<Character> listaLetras;
+    String userName;
     int vidas;
     boolean comodin;
-    String userName;
+
 
 
     @Override
@@ -49,30 +52,38 @@ public class MainActivity extends AppCompatActivity {
 
         // Spinner de Letras
         letras = findViewById(R.id.spinnerLetras);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.listaLetras, android.R.layout.simple_spinner_item);
-        letras.setAdapter(adapter);
+        cargarSpinnerLetras();
 
         // Spinner de posicion NO TERMINADO
         posicion = findViewById(R.id.spinnerPosicion);
         /*ArrayAdapter adapterPosuicion
         posicion.setAdapter();*/
 
-        listaPalabras = getResources().getStringArray(R.array.listaPalabras);
+        userName = "Desconocido";
+        // Cargar el archivo de preferencias
+        cargarPreferencias();
 
         // Desactivar botones hasta que no se inicie el juego NO TERMINADO
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
-
-        // Cargar el archivo de preferencias
-        cargarPreferencias();
     }
 
     // Actualizar el nivel de vidas desde el archivo de Preferencias.
     public void cargarPreferencias(){
         SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
-        vidas = preferences.getInt("nivelVidas", 0); // Se marca 0, si no existe el archivo de preferencias
+        vidas = preferences.getInt("nivelVidas", 10); // Se marca 0, si no existe el archivo de preferencias
+        userName = preferences.getString("nameUser", "Desconocido");
         textVidas.setText(String.valueOf(vidas));
+    }
+
+    public void cargarSpinnerLetras(){
+        listaLetras = new ArrayList<>();
+        listaLetras.add(' ');
+        listaLetras.add((char)209);
+        for (char x = 65; x <= 90; x++)
+            listaLetras.add(x);
+        ArrayAdapter<CharSequence> adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaLetras);
+        letras.setAdapter(adapterLetras);
     }
 
     // Llevar a la Actividad Options las opciones actuales del juego
@@ -84,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intencion, 102);
     }
 
+    public void onClickRegister(View view){
+        Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
+        startActivity(intencion);
+    }
+
     // Actualizar las opciones del juego
     public void onActivityResult(int requestCode, int resultCode, Intent code){
         if (requestCode == 102 && resultCode == RESULT_OK){
@@ -91,10 +107,5 @@ public class MainActivity extends AppCompatActivity {
             comodin = options.getBoolean("comodin");
             cargarPreferencias(); // Actualizamos de nuevo las Preferencias
         }
-    }
-
-    public void onClickRegister(View view){
-        Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
-        startActivity(intencion);
     }
 }
