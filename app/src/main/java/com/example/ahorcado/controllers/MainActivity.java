@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private Button botonRegistrar;
 
     private ArrayList<Character> listaLetras;
+    ArrayAdapter<CharSequence> adapterLetras;
     private ArrayList<String> listaPosiciones;
     private String userName;
     private int vidas;
@@ -43,9 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private String muestraPalabra;
     private char[] letrasPalabra;
     private char[] letrasAdivinadas;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Actualizar el nivel de vidas desde el archivo de Preferencias.
+
     public void cargarPreferencias(){
         SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
         vidas = preferences.getInt("nivelVidas", 10); // Se marca 0, si no existe el archivo de preferencias
@@ -97,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         listaLetras.add((char)209);
         for (char x = 65; x <= 90; x++)
             listaLetras.add(x);
-        ArrayAdapter<CharSequence> adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaLetras);
+        adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaLetras);
         letras.setAdapter(adapterLetras);
     }
 
@@ -172,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
                 textVidas.setText(String.valueOf(vidas));
             }
 
+            // BORRAR LETRA
+            listaLetras.remove(letras.getSelectedItem());
+            adapterLetras.notifyDataSetChanged();
+
         } else {
             // adaptar posicion del usuario a las posiciones del Array de Char
             int pos = Integer.parseInt(posiciones.getSelectedItem().toString()) - 1;
@@ -183,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
                 vidas--;
                 textVidas.setText(String.valueOf(vidas));
             }
+
+
         }
 
         // Imprimir resultado en pantalla
@@ -199,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         botonIniciar.setEnabled(true);
         botonOpciones.setEnabled(true);
         botonRegistrar.setEnabled(true);
+
         cargarPreferencias();
         puntos = 0;
         textPuntos.setText(String.valueOf(puntos));

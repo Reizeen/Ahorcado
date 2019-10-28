@@ -34,6 +34,9 @@ public class Options extends AppCompatActivity {
         numeroVidas = findViewById(R.id.numVidas);
         comodin = findViewById(R.id.comodin);
 
+        Bundle datos = this.getIntent().getExtras();
+        comodin.setChecked(datos.getBoolean("comodin"));
+
         cargarPreferencias();
     }
 
