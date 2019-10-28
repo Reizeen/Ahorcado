@@ -12,12 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.example.ahorcado.R;
-import com.example.ahorcado.objects.Palabra;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.example.ahorcado.objects.Partida;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,18 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private Button botonOpciones;
     private Button botonRegistrar;
 
-    private ArrayList<Character> listaLetras;
-    ArrayAdapter<CharSequence> adapterLetras;
-    private ArrayList<String> listaPosiciones;
     private String userName;
     private int vidas;
-    private int puntos;
     private boolean comodin;
-    private ArrayList<String> listaPalabras;
-    private Palabra palabra;
-    private String muestraPalabra;
-    private char[] letrasPalabra;
-    private char[] letrasAdivinadas;
+    private Partida partida;
+    private ArrayAdapter<CharSequence> adapterLetras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,30 +48,17 @@ public class MainActivity extends AppCompatActivity {
         botonOpciones = findViewById(R.id.btnOpciones);
         botonRegistrar = findViewById(R.id.btnRegistrar);
 
-        // Spinner de Letras
         letras = findViewById(R.id.spinnerLetras);
-        cargarSpinnerLetras();
-
-        // Spinner de posicion NO TERMINADO
         posiciones = findViewById(R.id.spinnerPosicion);
-
         userName = "Desconocido";
-        listaPalabras = new ArrayList<>();
-        listaPalabras.add("FUTBOL");
-        listaPalabras.add("BICICLETA");
-        listaPalabras.add("ORDENADOR");
-        listaPalabras.add("COCHE");
 
-        // Cargar el archivo de preferencias
         cargarPreferencias();
 
-        // Desactivar botones hasta que no se inicie el juego NO TERMINADO
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
     }
 
-    // Actualizar el nivel de vidas desde el archivo de Preferencias.
-
+    /** Cargar Archivo de preferencias */
     public void cargarPreferencias(){
         SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
         vidas = preferences.getInt("nivelVidas", 10); // Se marca 0, si no existe el archivo de preferencias
@@ -90,17 +66,7 @@ public class MainActivity extends AppCompatActivity {
         textVidas.setText(String.valueOf(vidas));
     }
 
-    public void cargarSpinnerLetras(){
-        listaLetras = new ArrayList<>();
-        listaLetras.add(' ');
-        listaLetras.add((char)209);
-        for (char x = 65; x <= 90; x++)
-            listaLetras.add(x);
-        adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaLetras);
-        letras.setAdapter(adapterLetras);
-    }
-
-    // Llevar a la Actividad Options las opciones actuales del juego
+    /** Utiliza Bundle para comodin */
     public void onClickOptions(View view){
         Intent intencion = new Intent(MainActivity.this, Options.class);
         Bundle datos = new Bundle();
@@ -109,12 +75,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intencion, 102);
     }
 
-    public void onClickRegister(View view){
-        Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
-        startActivity(intencion);
-    }
-
-    // Actualizar las opciones del juego
+    /** Actualizar opciones del juego al volver de Opciones */
     public void onActivityResult(int requestCode, int resultCode, Intent code){
         if (requestCode == 102 && resultCode == RESULT_OK){
             Bundle options = code.getExtras();
@@ -123,79 +84,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Inicia el juego
+    public void onClickRegister(View view){
+        Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
+        startActivity(intencion);
+    }
+
     public void onClickIniciar(View view){
         botonJugar.setEnabled(true);
         botonFinalizar.setEnabled(true);
         botonIniciar.setEnabled(false);
         botonOpciones.setEnabled(false);
         botonRegistrar.setEnabled(false);
+        cargarPreferencias();
 
-        palabra = new Palabra(listaPalabras);
-        palabra.seleccionPalabra();
-        muestraPalabra = "";
-        letrasPalabra = palabra.palabraDividia();
-        letrasAdivinadas = new char[letrasPalabra.length];
-        for (int x = 0; x < letrasAdivinadas.length; x++){
-            muestraPalabra += " _ ";
-            letrasAdivinadas[x] = '_';
-        }
-        textPalabra.setText(muestraPalabra);
+        partida = new Partida(vidas, comodin);
+        partida.iniciarPartida();
+        Log.i(null, partida.getPalabra());
+        textPalabra.setText(partida.getImprimirPalabra());
+        textPuntos.setText(String.valueOf(partida.getPuntos()));
 
-        // Cargar Spinner Posiciones
-        listaPosiciones = new ArrayList<>();
-        if(comodin)
-            listaPosiciones.add("*");
-        for(int x = 1; x <= letrasPalabra.length; x++){
-            listaPosiciones.add(String.valueOf(x));
-        }
-        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaPosiciones);
+        // CARGAR SPINNER POSICIONES
+        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, partida.getListaPosiciones());
         posiciones.setAdapter(adapterPosiciones);
+
+        // CARGAR SPINNER ALFABETICO
+        adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, partida.getListaAlfabetica());
+        letras.setAdapter(adapterLetras);
     }
 
-    // Controlador del funcionamiento del juego
     public void onClickJugar(View view){
-        if (posiciones.getSelectedItem().equals("*")){
-            boolean adivinado = false;
-            for(int x = 0; x < letrasPalabra.length; x++){
-                if(letras.getSelectedItem().equals(letrasPalabra[x])){
-                    letrasAdivinadas[x] = letrasPalabra[x];
-                    adivinado = true;
-                }
-            }
-            if(adivinado) {
-                puntos++;
-                textPuntos.setText(String.valueOf(puntos));
-            } else {
-                vidas--;
-                textVidas.setText(String.valueOf(vidas));
-            }
-
-            // BORRAR LETRA
-            listaLetras.remove(letras.getSelectedItem());
-            adapterLetras.notifyDataSetChanged();
-
-        } else {
-            // adaptar posicion del usuario a las posiciones del Array de Char
-            int pos = Integer.parseInt(posiciones.getSelectedItem().toString()) - 1;
-            if(letras.getSelectedItem().equals(letrasPalabra[pos])){
-                puntos+=5;
-                textPuntos.setText(String.valueOf(puntos));
-                letrasAdivinadas[pos] = letrasPalabra[pos];
-            } else {
-                vidas--;
-                textVidas.setText(String.valueOf(vidas));
-            }
-
-
-        }
-
-        // Imprimir resultado en pantalla
-        muestraPalabra = "";
-        for(int x = 0; x < letrasAdivinadas.length; x++){
-            muestraPalabra += " " + letrasAdivinadas[x] + " ";
-        }
-        textPalabra.setText(muestraPalabra);
+        partida.compararLetra(posiciones.getSelectedItem().toString(), letras.getSelectedItem().toString());
+        textPalabra.setText(partida.getImprimirPalabra());
+        textVidas.setText(String.valueOf(partida.getVidas()));
+        textPuntos.setText(String.valueOf(partida.getPuntos()));
     }
 
     public  void onClickFinalizar(View view){
@@ -204,10 +126,5 @@ public class MainActivity extends AppCompatActivity {
         botonIniciar.setEnabled(true);
         botonOpciones.setEnabled(true);
         botonRegistrar.setEnabled(true);
-
-        cargarPreferencias();
-        puntos = 0;
-        textPuntos.setText(String.valueOf(puntos));
     }
-
 }
