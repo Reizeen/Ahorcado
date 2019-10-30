@@ -16,6 +16,10 @@ import android.widget.Toast;
 import com.example.ahorcado.R;
 import com.example.ahorcado.model.Partida;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView textPalabra;
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean comodin;
     private Partida partida;
     private ArrayAdapter<CharSequence> adapterLetras;
+    private ArrayList<Character> listaAlfabetica;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +111,13 @@ public class MainActivity extends AppCompatActivity {
         textPuntos.setText(String.valueOf(partida.getPuntos()));
 
         // CARGAR SPINNER POSICIONES
-        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, partida.getListaPosiciones());
+        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, partida.generarListaPosiciones());
         posiciones.setAdapter(adapterPosiciones);
 
         // CARGAR SPINNER ALFABETICO
-        adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, partida.getListaAlfabetica());
+        listaAlfabetica = partida.generarListaAlfabetica();
+        adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaAlfabetica);
         letras.setAdapter(adapterLetras);
     }
 
@@ -121,12 +128,21 @@ public class MainActivity extends AppCompatActivity {
         textVidas.setText(String.valueOf(partida.getVidas()));
         textPuntos.setText(String.valueOf(partida.getPuntos()));
 
-        if(partida.compararPalabra()){
-            Toast.makeText(getApplicationContext(),"GANASTE " + userName, Toast.LENGTH_LONG).show();
+        if(partida.palabraCompletada()){
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String fecha = sdf.format(date);
+            String mensaje = userName + ": " + textPuntos.getText().toString() + " puntos el " + fecha;
+            Toast.makeText(getApplicationContext(),"GANASTE " + mensaje, Toast.LENGTH_LONG).show();
             onClickFinalizar(view);
         } else if (partida.getVidas() == 0){
             Toast.makeText(getApplicationContext(),"PERDISTE " + userName, Toast.LENGTH_LONG).show();
             onClickFinalizar(view);
+        }
+
+        if(partida.borrarLetra(letras.getSelectedItem().toString())){
+            listaAlfabetica.remove(letras.getSelectedItem());
+            adapterLetras.notifyDataSetChanged();
         }
     }
 

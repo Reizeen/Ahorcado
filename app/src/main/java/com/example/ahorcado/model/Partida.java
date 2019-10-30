@@ -11,7 +11,6 @@ public class Partida {
     private int puntos;
     private boolean comodin;
     private ArrayList<String> listaPosiciones;
-    private ArrayList<Character> listaAlfabetica;
     private String[] listaPalabras = {"FUTBOL", "BICICLETA", "ORDENADOR", "COCHE"};  ;
     private String palabra;
     private char[] letrasAdivinadas;
@@ -40,7 +39,7 @@ public class Partida {
     }
 
     /** Establecer un array con el numero de posiciones que tenga la palabra elegida */
-    public ArrayList<String> getListaPosiciones(){
+    public ArrayList<String> generarListaPosiciones(){
         listaPosiciones = new ArrayList<>();
 
         if(comodin)
@@ -53,8 +52,8 @@ public class Partida {
     }
 
     /** Establece un array con las letras el Abecedario */
-    public ArrayList<Character> getListaAlfabetica(){
-        listaAlfabetica = new ArrayList<>();
+    public ArrayList<Character> generarListaAlfabetica(){
+        ArrayList<Character> listaAlfabetica = new ArrayList<>();
         for (char x = 65; x <= 90; x++)
             listaAlfabetica.add(x);
         listaAlfabetica.add((char)209);
@@ -67,7 +66,6 @@ public class Partida {
             boolean adivinado = false;
             for(int x = 0; x < palabra.length(); x++){
                 if(letra.charAt(0) == palabra.charAt(x)){
-                    Log.i(null, "entré");
                     letrasAdivinadas[x] = palabra.charAt(x);
                     adivinado = true;
                 }
@@ -89,14 +87,24 @@ public class Partida {
         }
     }
 
-    public boolean compararPalabra(){
+    /** borrar letra si no se encuentra en la palabra o ya ha sido usada */
+    public boolean borrarLetra(String letra){
+        for (int x = 0; x < palabra.length(); x++){
+            if (letra.charAt(0) == palabra.charAt(x) && letrasAdivinadas[x] == '_')
+                return false;
+        }
+        return true;
+    }
+
+    /** Comprobar si se han acertado todas las letras */
+    public boolean palabraCompletada(){
         String palabraAdivinada = "";
         for (int x = 0; x < letrasAdivinadas.length; x++)
             palabraAdivinada += letrasAdivinadas[x];
+
         if (palabraAdivinada.equals(palabra))
             return true;
         return false;
-
     }
 
     /** Imprimir la palabra en la interfaz */
@@ -116,13 +124,5 @@ public class Partida {
     /** Numero de puntos actuales */
     public int getPuntos() {
         return puntos;
-    }
-
-    public boolean getComodin() {
-        return comodin;
-    }
-
-    public String getPalabra() {
-        return palabra;
     }
 }
