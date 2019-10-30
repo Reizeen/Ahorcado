@@ -89,7 +89,15 @@ public class Partida {
         }
     }
 
+    public boolean compararPalabra(){
+        String palabraAdivinada = "";
+        for (int x = 0; x < letrasAdivinadas.length; x++)
+            palabraAdivinada += letrasAdivinadas[x];
+        if (palabraAdivinada.equals(palabra))
+            return true;
+        return false;
 
+    }
 
     /** Imprimir la palabra en la interfaz */
     public String getImprimirPalabra(){

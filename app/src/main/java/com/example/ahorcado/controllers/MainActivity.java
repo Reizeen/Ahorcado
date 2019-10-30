@@ -6,12 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.ahorcado.R;
 import com.example.ahorcado.model.Partida;
 
@@ -119,10 +120,18 @@ public class MainActivity extends AppCompatActivity {
         textPalabra.setText(partida.getImprimirPalabra());
         textVidas.setText(String.valueOf(partida.getVidas()));
         textPuntos.setText(String.valueOf(partida.getPuntos()));
+
+        if(partida.compararPalabra()){
+            Toast.makeText(getApplicationContext(),"GANASTE " + userName, Toast.LENGTH_LONG).show();
+            onClickFinalizar(view);
+        } else if (partida.getVidas() == 0){
+            Toast.makeText(getApplicationContext(),"PERDISTE " + userName, Toast.LENGTH_LONG).show();
+            onClickFinalizar(view);
+        }
     }
 
     /** Finalizar el Juego al hacer click en btnFinalizar */
-    public  void onClickFinalizar(View view){
+    public void onClickFinalizar(View view){
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
         botonIniciar.setEnabled(true);
