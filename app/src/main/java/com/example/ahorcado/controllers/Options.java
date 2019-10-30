@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -15,13 +16,11 @@ import com.example.ahorcado.R;
 
 public class Options extends AppCompatActivity {
 
-    RadioButton botonFacil;
-    RadioButton botonMedio;
-    RadioButton botonDificil;
-    EditText numeroVidas;
-    Switch comodin;
-    int vidas;
-
+    private RadioButton botonFacil;
+    private RadioButton botonMedio;
+    private RadioButton botonDificil;
+    private EditText numeroVidas;
+    private Switch botoncComodin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,18 +31,16 @@ public class Options extends AppCompatActivity {
         botonMedio = findViewById(R.id.btnRadioMedio);
         botonDificil = findViewById(R.id.btnRadioDificil);
         numeroVidas = findViewById(R.id.numVidas);
-        comodin = findViewById(R.id.comodin);
-
-        Bundle datos = this.getIntent().getExtras();
-        comodin.setChecked(datos.getBoolean("comodin"));
-
+        botoncComodin = findViewById(R.id.comodin);
         cargarPreferencias();
     }
 
     // Actualizar el nivel de vidas desde el archivo de Preferencias.
+    /** Actualizar las opciones del Archivo Preferencias */
     public void cargarPreferencias() {
         SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
-        vidas = preferences.getInt("nivelVidas", 0); // Se marca 0, si no existe el archivo de preferencias
+        int vidas = preferences.getInt("nivelVidas", 10); // Se marca 0, si no existe el archivo de preferencias
+        boolean comodin = preferences.getBoolean("comodin", false);
 
         if (vidas == 15)
             botonFacil.setChecked(true);
@@ -53,23 +50,13 @@ public class Options extends AppCompatActivity {
             botonDificil.setChecked(true);
         else
             numeroVidas.setText(String.valueOf(vidas));
+
+        if(comodin)
+            botoncComodin.setChecked(true);
     }
 
-    public void onClickVolver(View view) {
-        // Actualizar valor del numero de vidas
-        vidas = actualizarNivel();
-        // Guardar el nivel de vidas en el archivo de preferencias
-        guardarPreferencias();
-        // Guardar en un Bundle el valor del comodin
-        Intent intencion = new Intent(Options.this, MainActivity.class);
-        Bundle datos = new Bundle();
-        datos.putBoolean("comodin", comodin());
-        intencion.putExtras(datos);
-        setResult(RESULT_OK, intencion);
-        finish();
-    }
-
-    public int actualizarNivel() {
+    /** Actualizar el numero devidas */
+    public int actualizarVidas() {
         if (numeroVidas.getText().toString().isEmpty()) {
             if (botonFacil.isChecked())
                 return 15;
@@ -83,17 +70,27 @@ public class Options extends AppCompatActivity {
         return 10; // Vida por defecto
     }
 
-    public void guardarPreferencias(){
-        SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("nivelVidas", vidas);
-        editor.commit();
-    }
-
+    /** Actualizar comodin */
     public boolean comodin(){
-        if (comodin.isChecked())
+        if (botoncComodin.isChecked())
             return true;
         return false;
     }
 
+    /** Guardar las Opciones en el Archivo de Preferencias */
+    public void guardarPreferencias(){
+        SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("nivelVidas", actualizarVidas());
+        editor.putBoolean("comodin", comodin());
+        editor.commit();
+    }
+
+    /** Volver a la Activdad anterior */
+    public void onClickVolver(View view) {
+        guardarPreferencias();
+        Intent intencion = new Intent(Options.this, MainActivity.class);
+        setResult(RESULT_OK, intencion);
+        finish();
+    }
 }

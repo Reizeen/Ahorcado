@@ -3,6 +3,7 @@ package com.example.ahorcado.controllers;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +13,7 @@ import com.example.ahorcado.R;
 
 public class RegisterUsers extends AppCompatActivity {
 
-    EditText name;
+    private EditText name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,24 +21,18 @@ public class RegisterUsers extends AppCompatActivity {
         setContentView(R.layout.activity_register_users);
 
         name = findViewById(R.id.editNameUser);
-        cargarPreferencias();
+
+        Bundle datos = this.getIntent().getExtras();
+        name.setText(datos.getString("userName"));
     }
+
 
     public void onClickVolver(View view){
-        guardarPreferencias();
+        Intent intencion = new Intent(RegisterUsers.this, MainActivity.class);
+        Bundle datos = new Bundle();
+        datos.putString("userName", name.getText().toString());
+        intencion.putExtras(datos);
+        setResult(RESULT_OK, intencion);
         finish();
-    }
-
-    public void cargarPreferencias(){
-        SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        name.setText(preferences.getString("nameUser", "Desconocido"));
-    }
-
-    public void guardarPreferencias(){
-        SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("nameUser", name.getText().toString());
-        editor.commit();
     }
 }

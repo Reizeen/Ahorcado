@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.example.ahorcado.R;
-import com.example.ahorcado.objects.Partida;
+import com.example.ahorcado.model.Partida;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,62 +50,62 @@ public class MainActivity extends AppCompatActivity {
 
         letras = findViewById(R.id.spinnerLetras);
         posiciones = findViewById(R.id.spinnerPosicion);
+
         userName = "Desconocido";
-
         cargarPreferencias();
-
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
     }
 
-    /** Cargar Archivo de preferencias */
+    /** Cargar informacion del Archivo de Preferencias */
     public void cargarPreferencias(){
         SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
-        vidas = preferences.getInt("nivelVidas", 10); // Se marca 0, si no existe el archivo de preferencias
-        userName = preferences.getString("nameUser", "Desconocido");
+        vidas = preferences.getInt("nivelVidas", 10);
+        comodin = preferences.getBoolean("comodin", false);
         textVidas.setText(String.valueOf(vidas));
     }
 
-    /** Utiliza Bundle para comodin */
+    /** Envio de la Actividad RegisterUsers */
+    public void onClickRegister(View view){
+        Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
+        Bundle datos = new Bundle();
+        datos.putString("userName", userName);
+        intencion.putExtras(datos);
+        startActivityForResult(intencion, 101);
+    }
+
+    /** Envio de la Actividad Options junto a un Bundle para el comodin */
     public void onClickOptions(View view){
         Intent intencion = new Intent(MainActivity.this, Options.class);
-        Bundle datos = new Bundle();
-        datos.putBoolean("comodin", comodin);
-        intencion.putExtras(datos);
         startActivityForResult(intencion, 102);
     }
 
-    /** Actualizar opciones del juego al volver de Opciones */
+    /** Actualizar opciones del juego al volver de la actividad de Options
+     *  o actualizar registro al volver de la actividad RegisterUser */
     public void onActivityResult(int requestCode, int resultCode, Intent code){
         if (requestCode == 102 && resultCode == RESULT_OK){
-            Bundle options = code.getExtras();
-            comodin = options.getBoolean("comodin");
-            cargarPreferencias(); // Actualizamos de nuevo las Preferencias
+            cargarPreferencias();
+        } else if (requestCode == 101 && resultCode == RESULT_OK){
+            Bundle datos = code.getExtras();
+            userName = datos.getString("userName");
         }
     }
 
-    public void onClickRegister(View view){
-        Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
-        startActivity(intencion);
-    }
-
+    /** Iniciación de la Partida */
     public void onClickIniciar(View view){
         botonJugar.setEnabled(true);
         botonFinalizar.setEnabled(true);
         botonIniciar.setEnabled(false);
         botonOpciones.setEnabled(false);
         botonRegistrar.setEnabled(false);
-        cargarPreferencias();
 
         partida = new Partida(vidas, comodin);
         partida.iniciarPartida();
-        Log.i(null, partida.getPalabra());
         textPalabra.setText(partida.getImprimirPalabra());
         textPuntos.setText(String.valueOf(partida.getPuntos()));
 
         // CARGAR SPINNER POSICIONES
-        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, partida.getListaPosiciones());
+        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, partida.getListaPosiciones());
         posiciones.setAdapter(adapterPosiciones);
 
         // CARGAR SPINNER ALFABETICO
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         letras.setAdapter(adapterLetras);
     }
 
+    /** Comparar Letras */
     public void onClickJugar(View view){
         partida.compararLetra(posiciones.getSelectedItem().toString(), letras.getSelectedItem().toString());
         textPalabra.setText(partida.getImprimirPalabra());
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         textPuntos.setText(String.valueOf(partida.getPuntos()));
     }
 
+    /** Finalizar el Juego al hacer click en btnFinalizar */
     public  void onClickFinalizar(View view){
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);

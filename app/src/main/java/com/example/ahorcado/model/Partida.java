@@ -1,4 +1,4 @@
-package com.example.ahorcado.objects;
+package com.example.ahorcado.model;
 
 import android.util.Log;
 
@@ -14,7 +14,6 @@ public class Partida {
     private ArrayList<Character> listaAlfabetica;
     private String[] listaPalabras = {"FUTBOL", "BICICLETA", "ORDENADOR", "COCHE"};  ;
     private String palabra;
-    private String muestraPalabra;
     private char[] letrasAdivinadas;
 
     public Partida(int vidas, boolean comodin){
@@ -23,6 +22,8 @@ public class Partida {
         puntos = 0;
     }
 
+    /** Inicia la partida eligiendo una palabra
+      * y estableciendo un array char sin acertar ninguna letra */
     public void iniciarPartida(){
         palabra = seleccionPalabra();
         letrasAdivinadas = new char[palabra.length()];
@@ -31,24 +32,27 @@ public class Partida {
         }
     }
 
+    /** Elije una palabra al azar del Array listaPalabras */
     public String seleccionPalabra(){
         Random r = new Random();
         int i = r.nextInt(listaPalabras.length);
         return listaPalabras[i];
     }
 
+    /** Establecer un array con el numero de posiciones que tenga la palabra elegida */
     public ArrayList<String> getListaPosiciones(){
         listaPosiciones = new ArrayList<>();
 
         if(comodin)
             listaPosiciones.add("*");
 
-        for(int x = 1; x <= getLonguitudPalabra(); x++){
+        for(int x = 1; x <= palabra.length(); x++){
             listaPosiciones.add(String.valueOf(x));
         }
         return listaPosiciones;
     }
 
+    /** Establece un array con las letras el Abecedario */
     public ArrayList<Character> getListaAlfabetica(){
         listaAlfabetica = new ArrayList<>();
         for (char x = 65; x <= 90; x++)
@@ -57,6 +61,7 @@ public class Partida {
         return listaAlfabetica;
     }
 
+    /** Comparar la letra segun la posicion establecida */
     public void compararLetra(String posicion, String letra){
         if (posicion.equals("*")){
             boolean adivinado = false;
@@ -74,7 +79,6 @@ public class Partida {
                 vidas--;
 
         } else {
-            // Adaptar posicion del usuario a las posiciones del Array de Char
             int pos = Integer.parseInt(posicion) - 1;
             if(letra.charAt(0) == palabra.charAt(pos)){
                 letrasAdivinadas[pos] = palabra.charAt(pos);
@@ -85,10 +89,9 @@ public class Partida {
         }
     }
 
-    public int getLonguitudPalabra(){
-        return palabra.length();
-    }
 
+
+    /** Imprimir la palabra en la interfaz */
     public String getImprimirPalabra(){
         String printPalabra = "";
         for(int x = 0; x < letrasAdivinadas.length; x++){
@@ -97,10 +100,12 @@ public class Partida {
         return printPalabra;
     }
 
+    /** Numero de vidas actuales */
     public int getVidas() {
         return vidas;
     }
 
+    /** Numero de puntos actuales */
     public int getPuntos() {
         return puntos;
     }
