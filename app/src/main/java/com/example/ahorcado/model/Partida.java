@@ -2,8 +2,6 @@ package com.example.ahorcado.model;
 
 import android.content.Context;
 import android.util.Log;
-
-import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,11 +55,12 @@ public class Partida {
     }
 
     /** Establece un array con las letras el Abecedario */
-    public ArrayList<Character> generarListaAlfabetica(){
-        ArrayList<Character> listaAlfabetica = new ArrayList<>();
+    public ArrayList<String> generarListaAlfabetica(){
+        ArrayList<String> listaAlfabetica = new ArrayList<>();
         for (char x = 65; x <= 90; x++)
-            listaAlfabetica.add(x);
-        listaAlfabetica.add((char)209);
+            listaAlfabetica.add(String.valueOf(x));
+        char ny = 209;
+        listaAlfabetica.add(String.valueOf(ny));
         return listaAlfabetica;
     }
 

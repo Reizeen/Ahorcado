@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private int vidas;
     private boolean comodin;
     private Partida partida;
-    private ArrayAdapter<CharSequence> adapterLetras;
-    private ArrayList<Character> listaAlfabetica;
+    private ArrayAdapter<String> adapterLetras;
+    private ArrayList<String> listaAlfabetica;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,14 +155,14 @@ public class MainActivity extends AppCompatActivity {
         guardarEstado.putString("user", userName);
         guardarEstado.putBoolean("partidaEmpezada", false);
 
-        if (partida != null) {
+        if (botonJugar.isEnabled()) {
             guardarEstado.putBoolean("partidaEmpezada", true);
             guardarEstado.putInt("vidas", partida.getVidas());
             guardarEstado.putInt("puntos", partida.getPuntos());
             guardarEstado.putString("palabra", partida.getPalabra());
             guardarEstado.putCharArray("letrasAdivinadas", partida.getLetrasAdivinadas());
             guardarEstado.putStringArrayList("listaPosiciones", partida.getListaPosiciones());
-            //guardarEstado.putCharSequenceArrayList("listaLetras", listaAlfabetica);
+            guardarEstado.putStringArrayList("listaLetras", listaAlfabetica);
         }
     }
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, partida.generarListaPosiciones());
             posiciones.setAdapter(adapterPosiciones);
 
-            listaAlfabetica = partida.generarListaAlfabetica();
+            listaAlfabetica = recEstado.getStringArrayList("listaLetras");
             adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaAlfabetica);
             letras.setAdapter(adapterLetras);
 
