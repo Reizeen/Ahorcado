@@ -12,13 +12,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.ahorcado.R;
 import com.example.ahorcado.model.Partida;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         letras.setAdapter(adapterLetras);
     }
 
-    /** Comparar Letras */
+    /** Comparar Letras, controlar la finalizacion de la partida y borrar letras del Spinner */
     public void onClickJugar(View view){
         partida.compararLetra(posiciones.getSelectedItem().toString(), letras.getSelectedItem().toString());
         textPalabra.setText(partida.getImprimirPalabra());
@@ -129,14 +125,11 @@ public class MainActivity extends AppCompatActivity {
         textPuntos.setText(String.valueOf(partida.getPuntos()));
 
         if(partida.palabraCompletada()){
-            Date date = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            String fecha = sdf.format(date);
-            String mensaje = userName + ": " + textPuntos.getText().toString() + " puntos el " + fecha;
-            Toast.makeText(getApplicationContext(),"GANASTE " + mensaje, Toast.LENGTH_LONG).show();
+            partida.guardarPuntuacion(this, userName);
+            Toast.makeText(getApplicationContext(),userName + " Ganaste - " + textPuntos.getText().toString() + " Puntos", Toast.LENGTH_LONG).show();
             onClickFinalizar(view);
         } else if (partida.getVidas() == 0){
-            Toast.makeText(getApplicationContext(),"PERDISTE " + userName, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Perdiste " + userName, Toast.LENGTH_LONG).show();
             onClickFinalizar(view);
         }
 
@@ -153,5 +146,53 @@ public class MainActivity extends AppCompatActivity {
         botonIniciar.setEnabled(true);
         botonOpciones.setEnabled(true);
         botonRegistrar.setEnabled(true);
+    }
+
+    /** Guardar la informacion al rotar la pantalla */
+    /** ME QUEDA GUARDA EL SPINNER DE LETRAS */
+    protected void onSaveInstanceState(Bundle guardarEstado) {
+        super.onSaveInstanceState(guardarEstado);
+        guardarEstado.putString("user", userName);
+        guardarEstado.putBoolean("partidaEmpezada", false);
+
+        if (partida != null) {
+            guardarEstado.putBoolean("partidaEmpezada", true);
+            guardarEstado.putInt("vidas", partida.getVidas());
+            guardarEstado.putInt("puntos", partida.getPuntos());
+            guardarEstado.putString("palabra", partida.getPalabra());
+            guardarEstado.putCharArray("letrasAdivinadas", partida.getLetrasAdivinadas());
+            guardarEstado.putStringArrayList("listaPosiciones", partida.getListaPosiciones());
+            //guardarEstado.putCharSequenceArrayList("listaLetras", listaAlfabetica);
+        }
+    }
+
+    protected void onRestoreInstanceState(Bundle recEstado) {
+        super.onRestoreInstanceState(recEstado);
+        userName = recEstado.getString("user");
+
+        if(recEstado.getBoolean("partidaEmpezada")){
+            partida = new Partida(recEstado.getInt("vidas"), comodin);
+            partida.setPuntos(recEstado.getInt("puntos"));
+            partida.setPalabra(recEstado.getString("palabra"));
+            partida.setLetrasAdivinadas(recEstado.getCharArray("letrasAdivinadas"));
+            partida.setListaPosiciones(recEstado.getStringArrayList("listaPosiciones"));
+
+            textVidas.setText(String.valueOf(partida.getVidas()));
+            textPuntos.setText(String.valueOf(partida.getPuntos()));
+            textPalabra.setText(partida.getImprimirPalabra());
+
+            ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, partida.generarListaPosiciones());
+            posiciones.setAdapter(adapterPosiciones);
+
+            listaAlfabetica = partida.generarListaAlfabetica();
+            adapterLetras = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaAlfabetica);
+            letras.setAdapter(adapterLetras);
+
+            botonJugar.setEnabled(true);
+            botonFinalizar.setEnabled(true);
+            botonIniciar.setEnabled(false);
+            botonOpciones.setEnabled(false);
+            botonRegistrar.setEnabled(false);
+        }
     }
 }

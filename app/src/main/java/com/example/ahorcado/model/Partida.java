@@ -1,8 +1,13 @@
 package com.example.ahorcado.model;
 
+import android.content.Context;
 import android.util.Log;
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 public class Partida {
@@ -107,6 +112,22 @@ public class Partida {
         return false;
     }
 
+    /** Guardar la puntuacion en el fichero */
+    public void guardarPuntuacion(Context context, String userName){
+        try {
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String fecha = sdf.format(date);
+            String puntuacionUsuario = userName + " - " + puntos + " Puntos - " + fecha + "\n";
+
+            OutputStreamWriter file = new OutputStreamWriter(context.openFileOutput("puntuacion.txt", Context.MODE_APPEND ));
+            file.write(puntuacionUsuario);
+            file.close();
+        } catch (Exception ex) {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+        }
+    }
+
     /** Imprimir la palabra en la interfaz */
     public String getImprimirPalabra(){
         String printPalabra = "";
@@ -116,13 +137,44 @@ public class Partida {
         return printPalabra;
     }
 
-    /** Numero de vidas actuales */
+
+    /*************************************************
+    ************** Getters and Setters ***************
+    *************************************************/
+
     public int getVidas() {
         return vidas;
     }
 
-    /** Numero de puntos actuales */
     public int getPuntos() {
         return puntos;
+    }
+
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
+    }
+
+    public String getPalabra() {
+        return palabra;
+    }
+
+    public void setPalabra(String palabra) {
+        this.palabra = palabra;
+    }
+
+    public ArrayList<String> getListaPosiciones() {
+        return listaPosiciones;
+    }
+
+    public void setListaPosiciones(ArrayList<String> listaPosiciones) {
+        this.listaPosiciones = listaPosiciones;
+    }
+
+    public char[] getLetrasAdivinadas() {
+        return letrasAdivinadas;
+    }
+
+    public void setLetrasAdivinadas(char[] letrasAdivinadas) {
+        this.letrasAdivinadas = letrasAdivinadas;
     }
 }
