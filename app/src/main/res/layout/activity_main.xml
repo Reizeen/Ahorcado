@@ -12,25 +12,43 @@
         android:orientation="vertical">
 
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_weight="4"
-        android:layout_marginTop="30dp">
-
-
-        <TextView
-            android:id="@+id/idMuestraPalabra"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@android:color/background_dark"
-            android:textSize="35dp"
-            android:textStyle="bold"
-            android:gravity="center"/>
-    </LinearLayout>
+            android:paddingLeft="10dp"
+            android:layout_marginTop="5dp">
+
+
+            <TextView
+                android:id="@+id/idUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@android:color/background_dark"
+                android:textSize="25dp"
+                android:gravity="center"
+                android:text="Usuario: Desconocido" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="4"
+            android:layout_marginTop="00dp">
+
+
+            <TextView
+                android:id="@+id/idMuestraPalabra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@android:color/background_dark"
+                android:textSize="35dp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,7 +71,7 @@
                 android:layout_height="25dp"
                 tools:layout_editor_absoluteX="154dp"
                 tools:layout_editor_absoluteY="283dp"
-                android:layout_marginRight="40dp"/>
+                android:layout_marginRight="20dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,7 +113,7 @@
                 android:id="@+id/spinnerLetras"
                 android:layout_width="100dp"
                 android:layout_height="25dp"
-                android:layout_marginRight="58dp"
+                android:layout_marginRight="40dp"
                 tools:layout_editor_absoluteX="154dp"
                 tools:layout_editor_absoluteY="283dp" />
 

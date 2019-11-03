@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textPalabra;
     private TextView textPuntos;
     private TextView textVidas;
+    private TextView textUserName;
     private Spinner posiciones;
     private Spinner letras;
     private Button botonJugar;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         textPalabra = findViewById(R.id.idMuestraPalabra);
         textPuntos = findViewById(R.id.textPuntos);
         textVidas = findViewById(R.id.textVidas);
+        textUserName = findViewById(R.id.idUserName);
         botonJugar = findViewById(R.id.btnJugar);
         botonIniciar = findViewById(R.id.btnIniciar);
         botonFinalizar = findViewById(R.id.btnFinalizar);
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         posiciones = findViewById(R.id.spinnerPosicion);
 
         userName = "Desconocido";
+        textUserName.setText("Jugador: " + userName);
+
         cargarPreferencias();
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
@@ -90,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == 101 && resultCode == RESULT_OK){
             Bundle datos = code.getExtras();
             userName = datos.getString("userName");
+            textUserName.setText("Jugador: " + userName);
         }
     }
 
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         letras.setAdapter(adapterLetras);
     }
 
-    /** Comparar Letras, controlar la finalizacion de la partida y borrar letras del Spinner */
+    /** Llamar al metodo Comparar Letras, controlar la finalizacion de la partida y borrar letras del Spinner */
     public void onClickJugar(View view){
         partida.compararLetra(posiciones.getSelectedItem().toString(), letras.getSelectedItem().toString());
         textPalabra.setText(partida.getImprimirPalabra());
@@ -169,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle recEstado) {
         super.onRestoreInstanceState(recEstado);
         userName = recEstado.getString("user");
+        textUserName.setText("Jugador: " + userName);
 
         if(recEstado.getBoolean("partidaEmpezada")){
             partida = new Partida(recEstado.getInt("vidas"), comodin);

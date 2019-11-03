@@ -49,9 +49,8 @@ public class RegisterUsers extends AppCompatActivity {
 
     public void imprimirPuntuaciones(ArrayList<String> puntuaciones){
         String mostrarPuntuaciones = "";
-        for(int x = 1; x < 5; x++){
-          mostrarPuntuaciones += puntuaciones.get(puntuaciones.size()-x) + "\n";
-        }
+        for(int x = 1; x < 5; x++)
+            mostrarPuntuaciones += puntuaciones.get(puntuaciones.size()-x) + "\n";
         textPuntuaciones.setText(mostrarPuntuaciones);
     }
 

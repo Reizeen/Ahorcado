@@ -55,7 +55,7 @@ public class Options extends AppCompatActivity {
             botoncComodin.setChecked(true);
     }
 
-    /** Actualizar el numero devidas */
+    /** Actualizar el numero de vidas */
     public int actualizarVidas() {
         if (numeroVidas.getText().toString().isEmpty()) {
             if (botonFacil.isChecked())
