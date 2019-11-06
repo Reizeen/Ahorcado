@@ -154,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Guardar la informacion al rotar la pantalla */
-    /** ME QUEDA GUARDA EL SPINNER DE LETRAS */
     protected void onSaveInstanceState(Bundle guardarEstado) {
         super.onSaveInstanceState(guardarEstado);
         guardarEstado.putString("user", userName);
@@ -171,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /** Recoger la informacion al rotar la pantalla */
     protected void onRestoreInstanceState(Bundle recEstado) {
         super.onRestoreInstanceState(recEstado);
         userName = recEstado.getString("user");

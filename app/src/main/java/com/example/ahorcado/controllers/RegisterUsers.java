@@ -32,6 +32,7 @@ public class RegisterUsers extends AppCompatActivity {
         imprimirPuntuaciones(leerFicherPuntuaciones());
     }
 
+    /** Lee el contenido del fichero y lo devuelve en un ArrayList por cada puntuación */
     public ArrayList<String> leerFicherPuntuaciones(){
         ArrayList<String> puntuaciones = new ArrayList<>();
         try {
@@ -47,6 +48,8 @@ public class RegisterUsers extends AppCompatActivity {
         return puntuaciones;
     }
 
+    /** Muestra en la actividad el contenido del ArrayList con las puntuaciones
+      * y los ordena de mas reciente a mas antiguo */
     public void imprimirPuntuaciones(ArrayList<String> puntuaciones){
         String mostrarPuntuaciones = "";
         for(int x = 1; x < 5; x++)
@@ -54,6 +57,7 @@ public class RegisterUsers extends AppCompatActivity {
         textPuntuaciones.setText(mostrarPuntuaciones);
     }
 
+    /** Vuelve a la aplicacion con un Bundle con la informacion del nombre del usuario */
     public void onClickVolver(View view){
         Intent intencion = new Intent(RegisterUsers.this, MainActivity.class);
         Bundle datos = new Bundle();

@@ -14,7 +14,7 @@ public class Partida {
     private int puntos;
     private boolean comodin;
     private ArrayList<String> listaPosiciones;
-    private String[] listaPalabras = {"FUTBOL", "BICICLETA", "ORDENADOR", "COCHE"};  ;
+    private String[] listaPalabras = {"FUTBOL", "BICICLETA", "ORDENADOR", "COCHE", "GOLF", "FARMACIA", "MAMUT", "AHORCADO", "MAR", "PAZ"};  ;
     private String palabra;
     private char[] letrasAdivinadas;
 
