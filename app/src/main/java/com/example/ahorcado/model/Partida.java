@@ -2,6 +2,7 @@ package com.example.ahorcado.model;
 
 import android.content.Context;
 import android.util.Log;
+
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Partida {
     private String palabra;
     private char[] letrasAdivinadas;
 
+    /** Constructor */
     public Partida(int vidas, boolean comodin){
         this.vidas = vidas;
         this.comodin = comodin;
@@ -25,7 +27,7 @@ public class Partida {
     }
 
     /** Inicia la partida eligiendo una palabra
-      * y estableciendo un array char sin acertar ninguna letra */
+      * y estableciendo un array char sin tener ninguna letra adivinada */
     public void iniciarPartida(){
         palabra = seleccionPalabra();
         letrasAdivinadas = new char[palabra.length()];
@@ -64,7 +66,10 @@ public class Partida {
         return listaAlfabetica;
     }
 
-    /** Comparar la letra segun la posicion establecida */
+    /** Comparar la letra segun la posicion establecida
+      * Si acierta suma los puntos correspondientes.
+      * Si falla resta un punto
+      * Al acertar una letra, la letra se pondra en el array de letras Adivinadas */
     public void compararLetra(String posicion, String letra){
         if (posicion.equals("*")){
             boolean adivinado = false;
@@ -91,13 +96,31 @@ public class Partida {
         }
     }
 
-    /** borrar letra si no se encuentra en la palabra o ya ha sido usada */
+    /** Borra la letra si no se encuentra en la palabra
+      * y borra letra si ya a sido usada al encontrase en la palabra */
     public boolean borrarLetra(String letra){
         for (int x = 0; x < palabra.length(); x++){
             if (letra.charAt(0) == palabra.charAt(x) && letrasAdivinadas[x] == '_')
                 return false;
         }
         return true;
+    }
+
+    /** Borra posicion del array si la posicion ya a sido usada */
+    public boolean borrarPosicion(String letra, String posicion) {
+        boolean letraBorrrada = false;
+        if (posicion.equals("*")){
+            for (int x = 0; x < palabra.length(); x++) {
+                if (letra.charAt(0) == palabra.charAt(x)) {
+                    listaPosiciones.remove(String.valueOf(x+1));
+                    letraBorrrada = true; } }
+        } else {
+            int pos = Integer.parseInt(posicion);
+            if (letra.charAt(0) == palabra.charAt(pos-1)) {
+                listaPosiciones.remove(String.valueOf(pos));
+                letraBorrrada = true; } }
+
+        return letraBorrrada;
     }
 
     /** Comprobar si se han acertado todas las letras */
@@ -111,7 +134,7 @@ public class Partida {
         return false;
     }
 
-    /** Guardar la puntuacion en el fichero */
+    /** Guardar la puntuacion en un fichero */
     public void guardarPuntuacion(Context context, String userName){
         try {
             Date date = new Date();

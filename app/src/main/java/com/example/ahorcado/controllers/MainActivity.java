@@ -34,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private int vidas;
     private boolean comodin;
     private Partida partida;
-    private ArrayAdapter<String> adapterLetras;
     private ArrayList<String> listaAlfabetica;
+    private ArrayAdapter<String> adapterLetras;
+    private ArrayList<String> listaPosiciones;
+    private ArrayAdapter<String> adapterPosiciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
         userName = "Desconocido";
         textUserName.setText("Jugador: " + userName);
-
         cargarPreferencias();
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         textVidas.setText(String.valueOf(vidas));
     }
 
-    /** Envio de la Actividad RegisterUsers */
+    /** Envio de la Actividad RegisterUsers junto a un Bundle para el nombre de Usuario */
     public void onClickRegister(View view){
         Intent intencion = new Intent(MainActivity.this, RegisterUsers.class);
         Bundle datos = new Bundle();
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intencion, 101);
     }
 
-    /** Envio de la Actividad Options junto a un Bundle para el comodin */
+    /** Envio de la Actividad Options */
     public void onClickOptions(View view){
         Intent intencion = new Intent(MainActivity.this, Options.class);
         startActivityForResult(intencion, 102);
@@ -98,8 +99,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Iniciación de la Partida */
+    /** Activa y desativa los botones especificos durante la Partida
+      * Inicia Partida con el numero de vidas y el comodin si precede
+      * Carga los Spinners del alfabeto y posiciones */
     public void onClickIniciar(View view){
+        cargarPreferencias();
         botonJugar.setEnabled(true);
         botonFinalizar.setEnabled(true);
         botonIniciar.setEnabled(false);
@@ -112,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
         textPuntos.setText(String.valueOf(partida.getPuntos()));
 
         // CARGAR SPINNER POSICIONES
-        ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, partida.generarListaPosiciones());
+        listaPosiciones = partida.generarListaPosiciones();
+        adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaPosiciones);
         posiciones.setAdapter(adapterPosiciones);
 
         // CARGAR SPINNER ALFABETICO
@@ -123,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Llamar al metodo Comparar Letras, controlar la finalizacion de la partida y borrar letras del Spinner */
+    /** Llama al metodo compararLetra para comparar letra y posicion con la palabra a adivinar
+      * Si se completa la palabra guardará la puntuación y mostrara un mensaje
+      * Si se pierde se mostrara un mensaje y no se guardará la puntuacion
+      * Se comprueba que si una letra ya no es necesario que se utilice se borrará del spinner */
     public void onClickJugar(View view){
         partida.compararLetra(posiciones.getSelectedItem().toString(), letras.getSelectedItem().toString());
         textPalabra.setText(partida.getImprimirPalabra());
@@ -138,13 +146,21 @@ public class MainActivity extends AppCompatActivity {
             onClickFinalizar(view);
         }
 
+        if(partida.borrarPosicion(letras.getSelectedItem().toString(), posiciones.getSelectedItem().toString())){
+            listaPosiciones = partida.getListaPosiciones();
+            adapterPosiciones.notifyDataSetChanged();
+        }
+
         if(partida.borrarLetra(letras.getSelectedItem().toString())){
             listaAlfabetica.remove(letras.getSelectedItem());
             adapterLetras.notifyDataSetChanged();
         }
+
+
     }
 
-    /** Finalizar el Juego al hacer click en btnFinalizar */
+    /** Finalizar el Juego al hacer click en btnFinalizar
+      * Activa y desativa Botones */
     public void onClickFinalizar(View view){
         botonJugar.setEnabled(false);
         botonFinalizar.setEnabled(false);
@@ -153,16 +169,18 @@ public class MainActivity extends AppCompatActivity {
         botonRegistrar.setEnabled(true);
     }
 
-    /** Guardar la informacion al rotar la pantalla */
+    /** Guardar la informacion al rotar la pantalla
+      * Si se gira la pantalla en medio de una partida se guardara la informacion de la partida */
     protected void onSaveInstanceState(Bundle guardarEstado) {
         super.onSaveInstanceState(guardarEstado);
         guardarEstado.putString("user", userName);
         guardarEstado.putBoolean("partidaEmpezada", false);
+        guardarEstado.putString("muestraPalabra", textPalabra.getText().toString());
+        guardarEstado.putInt("vidas", vidas);
+        guardarEstado.putInt("puntos", Integer.parseInt(textPuntos.getText().toString()));
 
         if (botonJugar.isEnabled()) {
             guardarEstado.putBoolean("partidaEmpezada", true);
-            guardarEstado.putInt("vidas", partida.getVidas());
-            guardarEstado.putInt("puntos", partida.getPuntos());
             guardarEstado.putString("palabra", partida.getPalabra());
             guardarEstado.putCharArray("letrasAdivinadas", partida.getLetrasAdivinadas());
             guardarEstado.putStringArrayList("listaPosiciones", partida.getListaPosiciones());
@@ -170,11 +188,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Recoger la informacion al rotar la pantalla */
+    /** Recoger la informacion al rotar la pantalla
+      * Si se rota la pantalla se cogerá la informacion de la partida y se iniciará una
+      * nueva partida con dicha informacion */
     protected void onRestoreInstanceState(Bundle recEstado) {
         super.onRestoreInstanceState(recEstado);
         userName = recEstado.getString("user");
         textUserName.setText("Jugador: " + userName);
+        textVidas.setText(String.valueOf(recEstado.getInt("vidas")));
+        textPuntos.setText(String.valueOf(recEstado.getInt("puntos")));
+        textPalabra.setText(recEstado.getString("muestraPalabra"));
 
         if(recEstado.getBoolean("partidaEmpezada")){
             partida = new Partida(recEstado.getInt("vidas"), comodin);
@@ -183,11 +206,8 @@ public class MainActivity extends AppCompatActivity {
             partida.setLetrasAdivinadas(recEstado.getCharArray("letrasAdivinadas"));
             partida.setListaPosiciones(recEstado.getStringArrayList("listaPosiciones"));
 
-            textVidas.setText(String.valueOf(partida.getVidas()));
-            textPuntos.setText(String.valueOf(partida.getPuntos()));
-            textPalabra.setText(partida.getImprimirPalabra());
-
-            ArrayAdapter<String> adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, partida.generarListaPosiciones());
+            listaPosiciones = recEstado.getStringArrayList("listaPosiciones");
+            adapterPosiciones = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaPosiciones);
             posiciones.setAdapter(adapterPosiciones);
 
             listaAlfabetica = recEstado.getStringArrayList("listaLetras");

@@ -67,7 +67,7 @@
                 android:id="@+id/textView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ultimas puntuaciones:"
+                android:text="Ultimas victorias:"
                 android:textStyle="bold"
                 android:textSize="20dp"
                 android:textColor="@android:color/background_dark"/>
@@ -76,7 +76,6 @@
                 android:id="@+id/idTextPuntuaciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Eric - 15 puntos - 21/10/2019 \nEric - 15 puntos - 21/10/2019 \nEric - 15 puntos - 21/10/2019\nEric - 15 puntos - 21/10/2019\nEric - 15 puntos - 21/10/2019"
                 android:textSize="20dp"
                 android:textColor="@android:color/background_dark"/>
 

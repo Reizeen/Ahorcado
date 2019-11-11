@@ -12,11 +12,13 @@ import com.example.ahorcado.R;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class RegisterUsers extends AppCompatActivity {
 
     private EditText name;
     private TextView textPuntuaciones;
+    private ArrayList<String> puntuaciones = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +31,13 @@ public class RegisterUsers extends AppCompatActivity {
         Bundle datos = this.getIntent().getExtras();
         name.setText(datos.getString("userName"));
 
-        imprimirPuntuaciones(leerFicherPuntuaciones());
+        leerFicherPuntuaciones();
+        imprimirPuntuaciones();
+
     }
 
     /** Lee el contenido del fichero y lo devuelve en un ArrayList por cada puntuación */
-    public ArrayList<String> leerFicherPuntuaciones(){
-        ArrayList<String> puntuaciones = new ArrayList<>();
+    public void leerFicherPuntuaciones(){
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(openFileInput("puntuacion.txt")));
             String linea;
@@ -45,15 +48,23 @@ public class RegisterUsers extends AppCompatActivity {
         catch (Exception ex) {
             Log.e("Ficheros", "Error al leer fichero desde memoria interna");
         }
-        return puntuaciones;
     }
 
     /** Muestra en la actividad el contenido del ArrayList con las puntuaciones
-      * y los ordena de mas reciente a mas antiguo */
-    public void imprimirPuntuaciones(ArrayList<String> puntuaciones){
+      * y las ordena de mas reciente a mas antiguo */
+    public void imprimirPuntuaciones(){
         String mostrarPuntuaciones = "";
-        for(int x = 1; x < 5; x++)
-            mostrarPuntuaciones += puntuaciones.get(puntuaciones.size()-x) + "\n";
+        int tamPunt;
+
+        if (puntuaciones.size() < 5) {
+            tamPunt = puntuaciones.size();
+        } else {
+            tamPunt = 4;
+        }
+        // Da la vuelta al ArrayList para coger primero las ultimas puntuaciones
+        Collections.reverse(puntuaciones);
+        for (int x = 0; x < tamPunt; x++)
+            mostrarPuntuaciones += puntuaciones.get(x) + "\n";
         textPuntuaciones.setText(mostrarPuntuaciones);
     }
 

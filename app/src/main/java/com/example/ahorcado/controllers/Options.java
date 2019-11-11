@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.ahorcado.R;
 
@@ -36,7 +37,7 @@ public class Options extends AppCompatActivity {
     }
 
     // Actualizar el nivel de vidas desde el archivo de Preferencias.
-    /** Actualizar las opciones del Archivo Preferencias */
+    /** Mostrar por pantalla la informacion de las vidas y el comodin del Archivo Preferencias */
     public void cargarPreferencias() {
         SharedPreferences preferences = getSharedPreferences("infoApp", Context.MODE_PRIVATE);
         int vidas = preferences.getInt("nivelVidas", 10); // Se marca 0, si no existe el archivo de preferencias
@@ -88,9 +89,13 @@ public class Options extends AppCompatActivity {
 
     /** Volver a la Activdad anterior */
     public void onClickVolver(View view) {
-        guardarPreferencias();
-        Intent intencion = new Intent(Options.this, MainActivity.class);
-        setResult(RESULT_OK, intencion);
-        finish();
+        if (actualizarVidas() < 1){
+            Toast.makeText(getApplicationContext(),"No puedes tener 0 vidas " , Toast.LENGTH_LONG).show();
+        } else {
+            guardarPreferencias();
+            Intent intencion = new Intent(Options.this, MainActivity.class);
+            setResult(RESULT_OK, intencion);
+            finish();
+        }
     }
 }
